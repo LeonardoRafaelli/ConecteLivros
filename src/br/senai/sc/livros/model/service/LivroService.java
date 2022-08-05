@@ -1,30 +1,75 @@
 package br.senai.sc.livros.model.service;
 
 import br.senai.sc.livros.model.dao.LivroDAO;
-import br.senai.sc.livros.model.entities.Livro;
+import br.senai.sc.livros.model.entities.*;
+import br.senai.sc.livros.view.Menu;
 
 import java.util.ArrayList;
 
 public class LivroService {
-    LivroDAO bd = new LivroDAO();
+    LivroDAO bdLivro = new LivroDAO();
 
     public void inserir(Livro livro) {
-        bd.inserir(livro);
+        bdLivro.inserir(livro);
     }
 
     public void remover(Livro livro) {
-        bd.remover(livro);
+        bdLivro.remover(livro);
     }
 
     public Livro selecionar(int isbn) {
-        return bd.selecionar(isbn);
+        return bdLivro.selecionar(isbn);
     }
 
     public void atualizar(int isbn, Livro livroAtualizado) {
-        bd.atualizar(isbn, livroAtualizado);
+        bdLivro.atualizar(isbn, livroAtualizado);
     }
 
     public ArrayList<Livro> getAllLivros(){
-        return bd.getAllLivros();
+
+        Pessoa usuario = Menu.getUsuario();
+        if(usuario instanceof Autor){
+            return bdLivro.selecionarPorAutor(usuario);
+        } else if(usuario instanceof Revisor){
+            return bdLivro.selecionarPorStatus(Status.AGUARDANDO_REVISAO);
+        } else {
+            return bdLivro.getAllLivros();
+        }
+    }
+
+    public ArrayList<Livro> selecionarPorAutor(Pessoa pessoa) {
+        return bdLivro.selecionarPorAutor(pessoa);
+    }
+
+    public ArrayList<Livro> selecionarPorStatus(Status status) {
+        return bdLivro.selecionarPorStatus(status);
+    }
+
+    public ArrayList<Livro> selecionarAtividadesAutor(Pessoa pessoa) {
+        return bdLivro.selecionarAtividadesAutor(pessoa);
+    }
+
+    public ArrayList<Livro> listarAtividades(Pessoa pessoa){
+        if(pessoa instanceof Autor){
+            return selecionarAtividadesAutor(pessoa);
+        } else if(pessoa instanceof Revisor){
+            return selecionarPorStatus(Status.AGUARDANDO_REVISAO);
+        } else {
+            return selecionarPorStatus(Status.APROVADO);
+        }
+    }
+
+    public Livro selecionarPorISBN(int isbn){
+        for(Livro livro : getAllLivros()){
+            if(livro.getISBN() == isbn){
+                return livro;
+            }
+        }
+        throw new RuntimeException("ISBN não encontrado!");
+    }
+
+    public void atualizarStatus(Livro livro, Status status){
+        livro.setStatus(status);
+        atualizar(livro.getISBN(), livro);
     }
 }

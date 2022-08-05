@@ -81,20 +81,13 @@ public class Pessoa {
 
     @Override
     public String toString() {
-        return "Pessoa{" +
-                "CPF='" + CPF + '\'' +
-                ", nome='" + nome + '\'' +
-                ", sobrenome='" + sobrenome + '\'' +
-                ", email='" + email + '\'' +
-                ", genero='" + genero + '\'' +
-                ", senha='" + senha + '\'' +
-                '}';
+        return nome + " " + sobrenome;
     }
 
     public static Pessoa cadastrar(String nome, String sobrenome, String email, Genero genero, String senha, String cpf, String confSenha){
         if(senha.equals(confSenha)){
             if(email.contains("@")){
-                return new Pessoa(cpf,nome,sobrenome,email,genero,senha);
+                return new Autor(cpf,nome,sobrenome,email,genero,senha);
             } else {
                 throw new RuntimeException("Email inválido!");
             }

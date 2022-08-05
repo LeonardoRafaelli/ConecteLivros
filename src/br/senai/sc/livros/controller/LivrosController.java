@@ -2,6 +2,7 @@ package br.senai.sc.livros.controller;
 
 import br.senai.sc.livros.model.entities.*;
 import br.senai.sc.livros.model.service.LivroService;
+import br.senai.sc.livros.view.Menu;
 
 import java.util.ArrayList;
 //Objeto que vai intermediar a view com a classe livros;
@@ -69,11 +70,31 @@ public class LivrosController {
     }
 
     public void cadastrar(String titulo, String isbn, String qtdPag, Pessoa autor){
-       model = Livro.cadastrar(titulo, Integer.parseInt(isbn), Integer.parseInt(qtdPag), (Autor)autor);
+       new LivroService().inserir(Livro.cadastrar(titulo, Integer.parseInt(isbn), Integer.parseInt(qtdPag), (Autor)autor));
     }
 
     public ArrayList<Livro> getAllLivros(){
-        LivroService  livroService = new LivroService();
-        return livroService.getAllLivros();
+        return new LivroService().getAllLivros();
     };
+
+    public ArrayList<Livro> selecionarPorAutor(){
+        return new LivroService().selecionarPorAutor(Menu.getUsuario());
+    }
+
+    public ArrayList<Livro> listarAtividades(){
+        return new LivroService().listarAtividades(Menu.getUsuario());
+    }
+
+    public Livro selecionarPorISBN(int isbn){
+        return new LivroService().selecionarPorISBN(isbn);
+    }
+
+    public void atualizarStatus(Livro livro, Status status){
+        new LivroService().atualizarStatus(livro, status);
+    }
+
+//    public ArrayList<Livro> selecionarPorStatus(){
+//        return new LivroService().selecionarPorStatus();
+//    }
+
 }

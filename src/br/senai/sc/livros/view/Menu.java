@@ -50,6 +50,7 @@ public class Menu extends JFrame implements ActionListener{
         if (usuario instanceof Autor || usuario instanceof Revisor){
             cadastrarRevisorButton.setVisible(false);
         }
+
         if(usuario instanceof Revisor || usuario instanceof Diretor){
             cadastrarLivrosButton.setVisible(false);
         }
@@ -57,27 +58,25 @@ public class Menu extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("cadastrarLivro")){
-            CadastroLivro cadastroLivro = new CadastroLivro(usuario);
-            cadastroLivro.setVisible(true);
-        } else
-            if(e.getActionCommand().equals("listarLivros")){
-                Estante estante = new Estante();
-                estante.setVisible(true);
-            } else
-            if(e.getActionCommand().equals("listarAtividades")){
-                Estante estante = new Estante();
-                estante.setVisible(true);
-            } else
-            if(e.getActionCommand().equals("cadastrarRevisor")){
-                CadastroPessoa cadastroPessoa = new CadastroPessoa();
-                cadastroPessoa.setVisible(true);
-            } else
-            if(e.getActionCommand().equals("sair")){
+        switch (e.getActionCommand()) {
+            case "cadastrarLivro" -> {
+                new CadastroLivro(usuario, null);
+            }
+            case "listarLivros" -> {
+                new Estante(1);
+            }
+            case "listarAtividades" -> {
+                new Estante(2);
+            }
+            case "cadastrarRevisor" -> {
+                new CadastroPessoa();
+            }
+            case "sair" -> {
                 usuario = null;
-                dispose();
                 Login login = new Login();
                 login.setVisible(true);
             }
+        }
+        dispose();
     }
 }

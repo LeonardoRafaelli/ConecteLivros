@@ -15,7 +15,7 @@ public class CadastroPessoa extends JFrame {
     private JPasswordField confirmaSenhaInput;
     private JTextField nomeInput;
     private JTextField cpfInput;
-    private JComboBox generoInput;
+    private JComboBox<Genero> generoInput;
 
     public CadastroPessoa() {
         criarComponentes();
@@ -53,11 +53,10 @@ public class CadastroPessoa extends JFrame {
 
     private void voltar() {
         Menu menu = new Menu(Menu.getUsuario());
-        menu.setVisible(true);
     }
 
     public void criarComponentes() {
-        generoInput.setModel(new DefaultComboBoxModel(Genero.values()));
+        generoInput.setModel(new DefaultComboBoxModel<>(Genero.values()));
         setContentPane(cadastroPessoa);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         pack();
