@@ -29,6 +29,8 @@ public class Estante extends JFrame {
                 Livro livro = livrosController.selecionarPorISBN(isbn);
                 livrosController.atualizarStatus(livro, Status.AGUARDANDO_REVISAO);
                 JOptionPane.showMessageDialog(null, "Livro editado com sucesso!");
+                dispose();
+                new Estante(option);
             } else if(usuario instanceof Revisor){
                 int row = tabelaLivros.getSelectedRow();
                 int isbn = (int) tabelaLivros.getValueAt(row, 0);
