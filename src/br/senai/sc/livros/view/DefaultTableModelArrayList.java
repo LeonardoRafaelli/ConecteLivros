@@ -12,7 +12,7 @@ public class DefaultTableModelArrayList extends AbstractTableModel {
 
     public DefaultTableModelArrayList(ArrayList<Livro> lista){
         this.dados = lista;
-        colunas = new String[]{"ISBN", "Título", "Qtd. Páginas", "Autor", "Editora", "Status"};
+        colunas = new String[]{"ISBN", "Título", "Qtd. Páginas", "Autor", "Editora", "Status", "Revisor responsável"};
     }
 
 
@@ -48,7 +48,9 @@ public class DefaultTableModelArrayList extends AbstractTableModel {
             case 5 -> {
                 return livro.getStatus();
             }
-
+            case 6 -> {
+                return livro.getRevisor();
+            }
         }
         return null;
     }

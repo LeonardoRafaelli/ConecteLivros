@@ -10,11 +10,13 @@ public class PessoaDAO {
 //    (String CPF, String nome, String sobrenome, String email, Genero genero, String senha
 
     static{
-        listaPessoas.add(new Autor("12435678", "Leozin", "Rafaellizin",
+        listaPessoas.add(new Autor("12435678", "autor", "Rafaellizin",
                 "autor@", Genero.MASCULINO, "123"));
-        listaPessoas.add(new Revisor("12435678", "Leozin", "Rafaellizin",
+        listaPessoas.add(new Revisor("12435678", "revisor", "Rafaellizin",
                 "revisor@", Genero.MASCULINO, "123"));
-        listaPessoas.add(new Diretor("12435678", "Leozin", "Rafaellizin",
+        listaPessoas.add(new Revisor("12435678", "Revisor2", "Rafaellizin",
+                "revisor2@", Genero.MASCULINO, "123"));
+        listaPessoas.add(new Diretor("12435678", "diretor", "Rafaellizin",
                 "diretor@", Genero.MASCULINO, "123"));
     }
 

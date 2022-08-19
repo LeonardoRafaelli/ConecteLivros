@@ -19,22 +19,19 @@ public class Login extends JFrame implements Runnable{
 
     public Login(){
         criarComponentes();
-        logarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(emailInput.getText().isEmpty() || passwordInput.getText().isEmpty()){
-                    JOptionPane.showMessageDialog(null,"Há campos vázios!");
-                } else {
-                    try{
+        logarButton.addActionListener(e -> {
+            if(emailInput.getText().isEmpty() || passwordInput.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null,"Há campos vázios!");
+            } else {
+                try{
 
-                        Pessoa pessoa = pessoaController.validaLogin(emailInput.getText(), passwordInput.getText());
-                        dispose();
+                    Pessoa pessoa = pessoaController.validaLogin(emailInput.getText(), passwordInput.getText());
+                    dispose();
 
-                        new Menu(pessoa);
+                    new Menu(pessoa);
 
-                    }catch (RuntimeException err){
-                        JOptionPane.showMessageDialog(null, err.getMessage());
-                    }
+                }catch (RuntimeException err){
+                    JOptionPane.showMessageDialog(null, err.getMessage());
                 }
             }
         });

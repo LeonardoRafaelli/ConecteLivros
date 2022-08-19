@@ -7,7 +7,7 @@ public class Livro {
     private Editora editora;
     private String titulo;
     private Status status;
-//    1 - Aprovado
+    //    1 - Aprovado
 //    2 - Em revisão
 //    3 - Aguardando revisão
 //    4 - Aguardando edição
@@ -16,10 +16,14 @@ public class Livro {
     private int qntdPaginas;
     private double paginasRevisadas = 0;
     private int ISBN;
+    private Pessoa revisor;
 
-    static ArrayList<Livro>listaLivros = new ArrayList<Livro>();
+    static ArrayList<Livro> listaLivros = new ArrayList<Livro>();
 
-    public Livro(){};
+    public Livro() {
+    }
+
+    ;
 
     public Livro(Autor autor, String titulo, Status status, int qntdPaginas, int ISBN) {
         this.autor = autor;
@@ -29,7 +33,7 @@ public class Livro {
         this.ISBN = ISBN;
     }
 
-    public static Livro cadastrar(String titulo, int isbn, int qtdPag, Autor autor){
+    public static Livro cadastrar(String titulo, int isbn, int qtdPag, Autor autor) {
         return new Livro(autor, titulo, Status.AGUARDANDO_REVISAO, qtdPag, isbn);
     }
 
@@ -89,26 +93,38 @@ public class Livro {
         this.paginasRevisadas = paginasRevisadas;
     }
 
+    public Pessoa getRevisor() {
+        return revisor;
+    }
 
-
+    public void setRevisor(Revisor revisor) {
+        this.revisor = revisor;
+    }
 
     @Override
     public String toString() {
-        String statusStri = null, editoraNome = null;
+        String editoraNome;
+        String revisorNome;
 
-        if(editora == null){
+        if (getEditora() == null) {
             editoraNome = "Livro não publicado";
         } else {
             editoraNome = editora.getNome();
+        }
+        if(getRevisor() == null){
+            revisorNome = "Sem revisor responsável";
+        } else {
+            revisorNome = getRevisor().getNome();
         }
 
         return "Livro{" +
                 "autor=" + autor.getNome() +
                 ", editora=" + editoraNome +
                 ", titulo='" + titulo + '\'' +
-                ", status=" + status.nome +
+                ", status=" + status.getNome() +
                 ", qntdPaginas=" + qntdPaginas +
                 ", ISBN=" + ISBN +
+                ", RevisorResponsável: " + revisorNome +
                 ", % Páginas revisadas: " + paginasRevisadas +
                 '}';
     }

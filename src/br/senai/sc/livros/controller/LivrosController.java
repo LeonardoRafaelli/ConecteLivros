@@ -93,6 +93,10 @@ public class LivrosController {
         new LivroService().atualizarStatus(livro, status);
     }
 
+    public void adicionarRevisor(Livro livro, Pessoa usuario){
+        new LivroService().adicionarRevisor(livro, (Revisor) usuario);
+    }
+
 //    public ArrayList<Livro> selecionarPorStatus(){
 //        return new LivroService().selecionarPorStatus();
 //    }

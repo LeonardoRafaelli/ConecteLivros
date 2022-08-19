@@ -29,7 +29,7 @@ public class CadastroLivro extends JFrame implements ActionListener{
     private void criarComponentes() {
 
 
-        opcoesStatus.setModel(new DefaultComboBoxModel<>(Status.values()));
+        opcoesStatus.setModel(new DefaultComboBoxModel<>(Status.getAllStatus()));
 
         setContentPane(cadastroLivro);
         setVisible(true);
@@ -45,7 +45,7 @@ public class CadastroLivro extends JFrame implements ActionListener{
             opcoesStatus.setVisible(false);
             labelStatus.setVisible(false);
         }
-        if(usuario instanceof Revisor){
+        if(usuario instanceof Revisor || usuario instanceof Diretor){
             cadastrarButton.setVisible(false);
             tituloInput.setEnabled(false);
             isbnInput.setEnabled(false);
@@ -58,7 +58,7 @@ public class CadastroLivro extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LivrosController controller = new LivrosController();
+        LivrosController livrosController = new LivrosController();
         switch (e.getActionCommand()){
             case "cadastrarButton" -> {
                 String titulo = tituloInput.getText();
@@ -69,7 +69,7 @@ public class CadastroLivro extends JFrame implements ActionListener{
                         qtdPag.isEmpty() ){
                     JOptionPane.showMessageDialog(null, "Há campos vazios!");
                 } else {
-                    controller.cadastrar(titulo, isbn, qtdPag, usuario);
+                    livrosController.cadastrar(titulo, isbn, qtdPag, usuario);
 
                     JOptionPane.showMessageDialog(null, "Livro cadastrado com sucesso!");
                     dispose();
@@ -77,9 +77,18 @@ public class CadastroLivro extends JFrame implements ActionListener{
                 }
             }
             case "confirmarButton" -> {
-                controller.atualizarStatus(livro, (Status) opcoesStatus.getSelectedItem());
-                JOptionPane.showMessageDialog(null, "Livro revisado com sucesso!");
+                livrosController.atualizarStatus(livro, Status.getStatusCorreto(String.valueOf(opcoesStatus.getSelectedItem())));
+                if(usuario instanceof Revisor){
+                    livrosController.adicionarRevisor(livro, usuario);
+                    JOptionPane.showMessageDialog(null, "Livro revisado com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Livro editado com sucesso!");
+
+                }
                 dispose();
+                Menu.getEstanteAtual().dispose();
+                Estante novaEstante = new Estante(Estante.getOpcaoEstante());
+                Menu.setEstanteAtual(novaEstante);
             }
         }
     }
