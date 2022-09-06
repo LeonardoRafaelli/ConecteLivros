@@ -40,6 +40,9 @@ public class CadastroLivro extends JFrame implements ActionListener{
         cadastrarButton.setActionCommand("cadastrarButton");
         confirmarButton.addActionListener((ActionListener) this);
         confirmarButton.setActionCommand("confirmarButton");
+        voltarButton.addActionListener((ActionListener) this);
+        voltarButton.setActionCommand("voltarButton");
+
         if(usuario instanceof Autor){
             confirmarButton.setVisible(false);
             opcoesStatus.setVisible(false);
@@ -89,6 +92,10 @@ public class CadastroLivro extends JFrame implements ActionListener{
                 Menu.getEstanteAtual().dispose();
                 Estante novaEstante = new Estante(Estante.getOpcaoEstante());
                 Menu.setEstanteAtual(novaEstante);
+            }
+            case "voltarButton" -> {
+                dispose();
+
             }
         }
     }
