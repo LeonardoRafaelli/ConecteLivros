@@ -13,8 +13,8 @@ import java.util.stream.Stream;
 public class LivroService {
     LivroDAO bdLivro = new LivroDAO();
 
-    public void inserir(Livro livro) {
-        bdLivro.inserir(livro);
+    public boolean inserir(Livro livro) {
+        return bdLivro.inserir(livro);
     }
 
     public void remover(Livro livro) {
@@ -29,13 +29,13 @@ public class LivroService {
         bdLivro.atualizar(isbn, livroAtualizado);
     }
 
-    public ArrayList<Livro> getAllLivros(){
+    public Collection<Livro> getAllLivros(){
         Pessoa usuario = Menu.getUsuario();
 
         if(usuario instanceof Autor){
             return bdLivro.selecionarPorAutor(usuario);
         } else if(usuario instanceof Revisor){
-            ArrayList<Livro> livros = bdLivro.selecionarPorStatus(Status.AGUARDANDO_REVISAO);
+            Collection<Livro> livros = bdLivro.selecionarPorStatus(Status.AGUARDANDO_REVISAO);
             livros.addAll(bdLivro.selecionarPorStatus(Status.EM_REVISAO));
             return livros;
         } else {
@@ -43,23 +43,23 @@ public class LivroService {
         }
     }
 
-    public ArrayList<Livro> selecionarPorAutor(Pessoa pessoa) {
+    public Collection<Livro> selecionarPorAutor(Pessoa pessoa) {
         return bdLivro.selecionarPorAutor(pessoa);
     }
 
-    public ArrayList<Livro> selecionarPorStatus(Status status) {
+    public Collection<Livro> selecionarPorStatus(Status status) {
         return bdLivro.selecionarPorStatus(status);
     }
 
-    public ArrayList<Livro> selecionarAtividadesAutor(Pessoa pessoa) {
+    public Collection<Livro> selecionarAtividadesAutor(Pessoa pessoa) {
         return bdLivro.selecionarAtividadesAutor(pessoa);
     }
 
-    public ArrayList<Livro> listarAtividades(Pessoa pessoa){
+    public Collection<Livro> listarAtividades(Pessoa pessoa){
         if(pessoa instanceof Autor){
             return selecionarAtividadesAutor(pessoa);
         } else if(pessoa instanceof Revisor){
-            ArrayList<Livro> livros = bdLivro.selecionarPorStatus(Status.AGUARDANDO_REVISAO);
+            Collection<Livro> livros = bdLivro.selecionarPorStatus(Status.AGUARDANDO_REVISAO);
             for(Livro livro : bdLivro.selecionarPorStatus(Status.EM_REVISAO)){
                 if(livro.getRevisor() == pessoa){
                     livros.add(livro);

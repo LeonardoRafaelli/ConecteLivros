@@ -29,7 +29,7 @@ public enum Status {
             stringStatus[3] = Status.REPROVADO.getNome();
             return stringStatus;
         } else {
-            String[] stringStatus = new String[4];
+            String[] stringStatus = new String[3];
             stringStatus[0] = Status.PUBLICADO.getNome();
             stringStatus[1] = Status.AGUARDANDO_REVISAO.getNome();
             stringStatus[2] = Status.REPROVADO.getNome();
@@ -54,11 +54,4 @@ public enum Status {
         this.nome = nome;
     }
 
-    public int[] getPermissao() {
-        return permissao;
-    }
-
-    public void setPermissao(int[] permissao) {
-        this.permissao = permissao;
-    }
 }

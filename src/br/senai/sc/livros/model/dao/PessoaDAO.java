@@ -3,11 +3,11 @@ package br.senai.sc.livros.model.dao;
 import br.senai.sc.livros.model.entities.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PessoaDAO {
-    private static final ArrayList<Pessoa> listaPessoas = new ArrayList<>();
-
-//    (String CPF, String nome, String sobrenome, String email, Genero genero, String senha
+    private static final Set<Pessoa> listaPessoas = new HashSet<>();
 
     static{
         listaPessoas.add(new Autor("12435678", "autor", "Rafaellizin",

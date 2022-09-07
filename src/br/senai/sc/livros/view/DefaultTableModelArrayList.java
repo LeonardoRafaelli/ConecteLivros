@@ -4,14 +4,16 @@ import br.senai.sc.livros.model.entities.Livro;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class DefaultTableModelArrayList extends AbstractTableModel {
 
-    ArrayList<Livro> dados;
+    List<Livro> dados;
     String[] colunas;
 
-    public DefaultTableModelArrayList(ArrayList<Livro> lista){
-        this.dados = lista;
+    public DefaultTableModelArrayList(Collection<Livro> lista){
+        this.dados = new ArrayList<>(lista);
         colunas = new String[]{"ISBN", "Título", "Qtd. Páginas", "Autor", "Editora", "Status", "Revisor responsável"};
     }
 

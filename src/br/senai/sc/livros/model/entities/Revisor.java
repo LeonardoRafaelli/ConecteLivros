@@ -6,18 +6,8 @@ import java.util.ArrayList;
 
 public class Revisor extends Pessoa {
 
-    private ArrayList<Livro> listaLivrosRevisor = new ArrayList<>();
-
     public Revisor(String CPF, String nome, String sobrenome, String email, Genero genero, String senha) {
         super(CPF, nome, sobrenome, email, genero, senha);
-    }
-
-    public ArrayList<Livro> getListaLivrosRevisor() {
-        return listaLivrosRevisor;
-    }
-
-    public void setListaLivrosRevisor(ArrayList<Livro> listaLivrosRevisor) {
-        this.listaLivrosRevisor = listaLivrosRevisor;
     }
 
 }

@@ -72,9 +72,12 @@ public class CadastroLivro extends JFrame implements ActionListener{
                         qtdPag.isEmpty() ){
                     JOptionPane.showMessageDialog(null, "Há campos vazios!");
                 } else {
-                    livrosController.cadastrar(titulo, isbn, qtdPag, usuario);
+                    if(livrosController.cadastrar(titulo, isbn, qtdPag, usuario)){
+                        JOptionPane.showMessageDialog(null, "Livro cadastrado com sucesso!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "ISBN já cadastrado!");
+                    };
 
-                    JOptionPane.showMessageDialog(null, "Livro cadastrado com sucesso!");
                     dispose();
                     new Menu(Menu.getUsuario());
                 }

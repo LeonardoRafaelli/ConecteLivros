@@ -8,6 +8,4 @@ public enum Genero {
     Genero(String nome){
         this.nome = nome;
     }
-
-    Genero(){}
 }

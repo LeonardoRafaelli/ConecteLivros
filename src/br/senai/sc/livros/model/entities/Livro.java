@@ -1,6 +1,7 @@
 package br.senai.sc.livros.model.entities;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Livro {
     private Autor autor;
@@ -13,16 +14,13 @@ public class Livro {
 //    4 - Aguardando edição
 //    5 - Reprovado
 //    6 - Publicado
-    private int qntdPaginas;
-    private double paginasRevisadas = 0;
-    private int ISBN;
+    private Integer qntdPaginas;
+    private Double paginasRevisadas = 0.0;
+    private Integer ISBN;
     private Pessoa revisor;
-
-    static ArrayList<Livro> listaLivros = new ArrayList<Livro>();
 
     public Livro() {
     }
-
     ;
 
     public Livro(Autor autor, String titulo, Status status, int qntdPaginas, int ISBN) {
@@ -35,6 +33,20 @@ public class Livro {
 
     public static Livro cadastrar(String titulo, int isbn, int qtdPag, Autor autor) {
         return new Livro(autor, titulo, Status.AGUARDANDO_REVISAO, qtdPag, isbn);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+        Livro livro = (Livro) o;
+        return this.ISBN == livro.ISBN;
+    }
+
+    @Override
+    public int hashCode() {
+        return ISBN;
     }
 
     public Autor getAutor() {
@@ -73,24 +85,9 @@ public class Livro {
         return qntdPaginas;
     }
 
-    public void setQntdPaginas(int qntdPaginas) {
-        this.qntdPaginas = qntdPaginas;
-    }
 
-    public int getISBN() {
+    public Integer getISBN() {
         return ISBN;
-    }
-
-    public void setISBN(int ISBN) {
-        this.ISBN = ISBN;
-    }
-
-    public double getPaginasRevisadas() {
-        return paginasRevisadas;
-    }
-
-    public void setPaginasRevisadas(double paginasRevisadas) {
-        this.paginasRevisadas = paginasRevisadas;
     }
 
     public Pessoa getRevisor() {
@@ -111,7 +108,7 @@ public class Livro {
         } else {
             editoraNome = editora.getNome();
         }
-        if(getRevisor() == null){
+        if (getRevisor() == null) {
             revisorNome = "Sem revisor responsável";
         } else {
             revisorNome = getRevisor().getNome();

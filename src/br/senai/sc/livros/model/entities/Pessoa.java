@@ -1,6 +1,7 @@
 package br.senai.sc.livros.model.entities;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Pessoa {
     private String CPF, nome, sobrenome, email, senha;
@@ -17,37 +18,31 @@ public class Pessoa {
         this.senha = senha;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        Pessoa outraPessoa = (Pessoa) o;
+        return CPF.equals(outraPessoa.CPF);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        for(char l : CPF.toCharArray()){
+            hash += l;
+        }
+        return hash;
+    }
 
     public String getCPF() {
         return CPF;
-    }
-
-    public void setCPF(String CPF) {
-        this.CPF = CPF;
     }
 
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSobrenome() {
-        return sobrenome;
-    }
-
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Genero getGenero() {
@@ -60,10 +55,6 @@ public class Pessoa {
 
     public String getSenha() {
         return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     public Pessoa validaLogin(String senha){
