@@ -64,6 +64,13 @@ public class Pessoa {
         throw new RuntimeException("Senha incorreta!");
     }
 
+    public String getSobrenome() {
+        return sobrenome;
+    }
+
+    public void setSobrenome(String sobrenome) {
+        this.sobrenome = sobrenome;
+    }
 
     @Override
     public String toString() {
