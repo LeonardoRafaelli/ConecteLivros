@@ -1,36 +1,64 @@
 package br.senai.sc.livros.model.dao;
 
+import br.senai.sc.livros.model.dao.conectaBD.ConexaoBD;
 import br.senai.sc.livros.model.entities.*;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 public class LivroDAO {
 
     private static Collection<Livro> listaLivros = new HashSet<>();
 
+    static Connection conn;
+    static PreparedStatement pstm;
 
     static{
-        Pessoa pessoa = new PessoaDAO().selecionarPorEmail("autor@");
-
-        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-                "O fogo", Status.AGUARDANDO_REVISAO, 568, 1234));
-        listaLivros.add(new Livro((Autor)pessoa,
-                "A água", Status.AGUARDANDO_EDICAO, 348, 2345));
-        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "autor@", Genero.FEMININO, "123"),
-                "A pedra", Status.APROVADO, 346, 2542));
-        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-                "O Henrique", Status.EM_REVISAO, 467, 4367));
-        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-                "A Camilly", Status.REPROVADO, 346, 2542));
-        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-                "O Impiedoso Romárinho", Status.PUBLICADO, 467, 4367));
+//        Pessoa pessoa = null;
+//        try {
+//            pessoa = new PessoaDAO().selecionarPorEmail("autor@");
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//
+//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
+//                "O fogo", Status.AGUARDANDO_REVISAO, 568, 1234));
+//        listaLivros.add(new Livro((Autor)pessoa,
+//                "A água", Status.AGUARDANDO_EDICAO, 348, 2345));
+//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "autor@", Genero.FEMININO, "123"),
+//                "A pedra", Status.APROVADO, 346, 2542));
+//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
+//                "O Henrique", Status.EM_REVISAO, 467, 4367));
+//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
+//                "A Camilly", Status.REPROVADO, 346, 2542));
+//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
+//                "O Impiedoso Romárinho", Status.PUBLICADO, 467, 4367));
     }
 
 
-    public boolean inserir(Livro livro){
-        boolean existe = !listaLivros.contains(livro);
-        listaLivros.add(livro);
-        return existe;
+    public boolean inserir(Livro livro) throws SQLException {
+        conn = ConexaoBD.connectDB();
+        String sqlQuery = "select * from livros";
+        pstm = conn.prepareStatement(sqlQuery);
+        ResultSet rs = pstm.executeQuery();
+        while(rs.next()){
+            if(rs.getInt("isbn") == livro.getISBN()){
+                return false;
+            }
+        }
+        String sqlCommand = "insert into livros (isbn, titulo, status, qtdPaginas, AUTOR_cpf) values (?,?,?,?,?);";
+        pstm = conn.prepareStatement(sqlCommand);
+        pstm.setInt(1, livro.getISBN());
+        pstm.setString(2, livro.getTitulo());
+        pstm.setInt(3, livro.getStatus().ordinal());
+        pstm.setInt(4, livro.getQntdPaginas());
+        pstm.setString(5, livro.getAutor().getCPF());
+        pstm.execute();
+        conn.close();
+        return true;
     }
 
     public void remover(Livro livro){

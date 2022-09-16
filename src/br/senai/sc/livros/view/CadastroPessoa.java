@@ -17,7 +17,7 @@ public class CadastroPessoa extends JFrame {
     private JTextField cpfInput;
     private JComboBox<Genero> generoInput;
 
-    public CadastroPessoa() {
+    public CadastroPessoa(int tipo) {
         criarComponentes();
         voltarButton.addActionListener(e -> {
             new Login();
@@ -34,7 +34,7 @@ public class CadastroPessoa extends JFrame {
                 JOptionPane.showMessageDialog(null, "Há campos não preenchidos!");
             } else {
                 try {
-                    controller.cadastrar(nomeInput.getText(), sobrenomeInput.getText(), emailInput.getText(), generoInput.getSelectedItem(), senhaInput.getText(), cpfInput.getText(), confirmaSenhaInput.getText());
+                    controller.cadastrar(nomeInput.getText(), sobrenomeInput.getText(), emailInput.getText(), generoInput.getSelectedItem(), senhaInput.getText(), cpfInput.getText(), confirmaSenhaInput.getText(), tipo);
                     JOptionPane.showMessageDialog(null, "Cadastro efetuado com sucesso!");
                     if (Menu.getUsuario() == null) {
                         new Login();

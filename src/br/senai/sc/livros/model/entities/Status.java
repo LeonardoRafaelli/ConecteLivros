@@ -5,12 +5,12 @@ import br.senai.sc.livros.view.Menu;
 import java.util.Arrays;
 
 public enum Status {
-    AGUARDANDO_REVISAO("Aguardando revisão", new int[]{1, 3}),
-    EM_REVISAO("Em revisão", new int[]{2}),
-    APROVADO("Aprovado", new int[]{2}),
-    AGUARDANDO_EDICAO("Aguardando edição", new int[]{2}),
-    REPROVADO("Reprovado", new int[]{2, 3}),
-    PUBLICADO("Publicado", new int[]{3});
+    AGUARDANDO_REVISAO("Aguardando revisão", new int[]{1, 3}),  //0
+    EM_REVISAO("Em revisão", new int[]{2}),                     //1
+    APROVADO("Aprovado", new int[]{2}),                         //2
+    AGUARDANDO_EDICAO("Aguardando edição", new int[]{2}),       //3
+    REPROVADO("Reprovado", new int[]{2, 3}),                    //4
+    PUBLICADO("Publicado", new int[]{3});                       //5
 
     private String nome;
     private int[] permissao;

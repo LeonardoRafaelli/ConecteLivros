@@ -78,7 +78,14 @@ public class Menu extends JFrame implements ActionListener {
                 estanteAtual = new Estante(2);
             }
             case "cadastrarRevisor" -> {
-                new CadastroPessoa();
+                if(usuario instanceof Diretor){
+                    // 1 - Autor
+                    // 2 - Revisor
+                    // 3 - Diretor
+                    new CadastroPessoa(2);
+                } else {
+                    new CadastroPessoa(1);
+                }
             }
             case "sair" -> {
                 usuario = null;

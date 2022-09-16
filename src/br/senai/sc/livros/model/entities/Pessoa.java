@@ -80,7 +80,11 @@ public class Pessoa {
     public static Pessoa cadastrar(String nome, String sobrenome, String email, Genero genero, String senha, String cpf, String confSenha){
         if(senha.equals(confSenha)){
             if(email.contains("@")){
-                return new Autor(cpf,nome,sobrenome,email,genero,senha);
+                if(cpf.length() == 11){
+                        return new Pessoa(cpf,nome,sobrenome,email,genero,senha);
+                } else {
+                    throw new RuntimeException("CPF inválido!");
+                }
             } else {
                 throw new RuntimeException("Email inválido!");
             }

@@ -36,7 +36,7 @@ public class Login extends JFrame implements Runnable{
             }
         });
         CADASTRARSEButton.addActionListener(e -> {
-            new CadastroPessoa();
+            new CadastroPessoa(1);
             dispose();
         });
     }

@@ -4,21 +4,19 @@ import br.senai.sc.livros.model.entities.Genero;
 import br.senai.sc.livros.model.entities.Pessoa;
 import br.senai.sc.livros.model.service.PessoaService;
 
-import javax.swing.*;
-
 public class PessoaController {
-    Pessoa model;
+    Pessoa pessoa;
 
     public Pessoa validaLogin(String email, String senha) {
         PessoaService service = new PessoaService();
-        model = service.selecionarPorEmail(email);
-        return model.validaLogin(senha);
+        pessoa = service.selecionarPorEmail(email);
+        return pessoa.validaLogin(senha);
     }
 
-    public void cadastrar(String nome, String sobrenome, String email, Object genero, String senha, String cpf, String confSenha) {
-        PessoaService service = new PessoaService();
+    public void cadastrar(String nome, String sobrenome, String email, Object genero, String senha, String cpf, String confSenha, int tipo) {
+        PessoaService pessoaService = new PessoaService();
         Pessoa pessoa = Pessoa.cadastrar(nome, sobrenome, email, (Genero)genero, senha, cpf, confSenha);
-        service.inserir(pessoa);
+        pessoaService.inserir(pessoa, tipo);
 
     }
 }

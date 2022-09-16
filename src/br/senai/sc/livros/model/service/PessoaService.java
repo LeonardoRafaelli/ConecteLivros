@@ -9,9 +9,9 @@ import java.sql.SQLException;
 public class PessoaService {
     PessoaDAO bdPessoa = new PessoaDAO();
 
-    public void inserir(Pessoa pessoa) {
+    public void inserir(Pessoa pessoa, int tipo) {
         try{
-            bdPessoa.inserir(pessoa);
+            bdPessoa.inserir(pessoa, tipo);
         } catch (SQLException err){
             JOptionPane.showMessageDialog(null, "Erro: " + err.getMessage());
             System.out.println(err.getMessage());
@@ -27,6 +27,10 @@ public class PessoaService {
     }
 
     public Pessoa selecionarPorEmail(String email){
-        return bdPessoa.selecionarPorEmail(email);
+        try{
+            return bdPessoa.selecionarPorEmail(email);
+        } catch (SQLException err){
+            throw new RuntimeException("Erro ao selecionar por email: " + err.getMessage());
+        }
     }
 }

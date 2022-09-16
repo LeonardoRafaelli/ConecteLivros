@@ -4,6 +4,7 @@ import br.senai.sc.livros.model.dao.LivroDAO;
 import br.senai.sc.livros.model.entities.*;
 import br.senai.sc.livros.view.Menu;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,13 @@ public class LivroService {
     LivroDAO bdLivro = new LivroDAO();
 
     public boolean inserir(Livro livro) {
-        return bdLivro.inserir(livro);
+        try{
+            return bdLivro.inserir(livro);
+        }catch (SQLException err){
+            System.out.println("Erro ao inserir livro: " + err.getMessage());
+            return false;
+        }
+
     }
 
     public void remover(Livro livro) {
