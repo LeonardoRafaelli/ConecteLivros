@@ -1,7 +1,10 @@
 package br.senai.sc.livros.model.dao;
 
-import br.senai.sc.livros.model.dao.conectaBD.ConexaoBD;
+import br.senai.sc.livros.model.factory.FactoryConnection;
 import br.senai.sc.livros.model.entities.*;
+import br.senai.sc.livros.model.factory.GenderFactory;
+import br.senai.sc.livros.model.factory.StatusFactory;
+import br.senai.sc.livros.view.Menu;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,116 +16,155 @@ public class LivroDAO {
 
     private static Collection<Livro> listaLivros = new HashSet<>();
 
-    static Connection conn;
-    static PreparedStatement pstm;
+    private Connection conn;
 
-    static{
-//        Pessoa pessoa = null;
-//        try {
-//            pessoa = new PessoaDAO().selecionarPorEmail("autor@");
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//
-//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-//                "O fogo", Status.AGUARDANDO_REVISAO, 568, 1234));
-//        listaLivros.add(new Livro((Autor)pessoa,
-//                "A água", Status.AGUARDANDO_EDICAO, 348, 2345));
-//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "autor@", Genero.FEMININO, "123"),
-//                "A pedra", Status.APROVADO, 346, 2542));
-//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-//                "O Henrique", Status.EM_REVISAO, 467, 4367));
-//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-//                "A Camilly", Status.REPROVADO, 346, 2542));
-//        listaLivros.add(new Livro(new Autor("123", "Bernadete", "#@!", "123@321", Genero.FEMININO, "123"),
-//                "O Impiedoso Romárinho", Status.PUBLICADO, 467, 4367));
+    public LivroDAO() {
+        this.conn = new FactoryConnection().connectDB();
     }
 
-
     public boolean inserir(Livro livro) throws SQLException {
-        conn = ConexaoBD.connectDB();
         String sqlQuery = "select * from livros";
-        pstm = conn.prepareStatement(sqlQuery);
-        ResultSet rs = pstm.executeQuery();
-        while(rs.next()){
-            if(rs.getInt("isbn") == livro.getISBN()){
-                return false;
+
+        try (PreparedStatement pstm = conn.prepareStatement(sqlQuery);) {
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                if (rs.getInt("isbn") == livro.getISBN()) {
+                    return false;
+                }
             }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro na preparação em inserir pessoa: " + e);
         }
+
         String sqlCommand = "insert into livros (isbn, titulo, status, qtdPaginas, AUTOR_cpf) values (?,?,?,?,?);";
-        pstm = conn.prepareStatement(sqlCommand);
-        pstm.setInt(1, livro.getISBN());
-        pstm.setString(2, livro.getTitulo());
-        pstm.setInt(3, livro.getStatus().ordinal());
-        pstm.setInt(4, livro.getQntdPaginas());
-        pstm.setString(5, livro.getAutor().getCPF());
-        pstm.execute();
-        conn.close();
+        try (PreparedStatement pstm = conn.prepareStatement(sqlCommand);) {
+            pstm.setInt(1, livro.getISBN());
+            pstm.setString(2, livro.getTitulo());
+            pstm.setInt(3, livro.getStatus().ordinal());
+            pstm.setInt(4, livro.getQntdPaginas());
+            pstm.setString(5, livro.getAutor().getCPF());
+            pstm.execute();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro na preparação em inserir pessoa: " + e);
+        }
+
         return true;
     }
 
-    public void remover(Livro livro){
+    public void remover(Livro livro) {
         listaLivros.remove(livro);
     }
 
-    public Livro selecionar(int isbn){
-        for(Livro livro : listaLivros){
-            if(livro.getISBN() == isbn){
+    public Livro selecionar(int isbn) {
+        for (Livro livro : listaLivros) {
+            if (livro.getISBN() == isbn) {
                 return livro;
             }
-        };
+        }
+        ;
         return null;
     }
 
-    public void atualizar(int isbn, Livro livroAtualizado){
-        for(Livro livro : listaLivros){
-            if(livro.getISBN() == isbn){
-                listaLivros.remove(livro);
-                listaLivros.add(livroAtualizado);
-            };
-        }
+    public void atualizarLivro(int isbn, Livro livroAtualizado, int tipoAtualizacao) {
+        //tipoAtualizacao
+        //1 - Atualiza Status
+        //2 - Adiciona Revisor ao livro
 
-        List<Livro> lista = new ArrayList<>(listaLivros);
-        int i = lista.indexOf(selecionar(isbn));
-        lista.set(i, livroAtualizado);
-        listaLivros.clear();
-        listaLivros.addAll(lista);
+        // TA QUASE PRONTOOOOO MAS É 21:51, ai n da
+        
+//        for (Livro livro : listaLivros) {
+//            if (livro.getISBN() == isbn) {
+//                listaLivros.remove(livro);
+//                listaLivros.add(livroAtualizado);
+//            }
+//            ;
+//        }
+//
+//        List<Livro> lista = new ArrayList<>(listaLivros);
+//        int i = lista.indexOf(selecionar(isbn));
+//        lista.set(i, livroAtualizado);
+//        listaLivros.clear();
+//        listaLivros.addAll(lista);
     }
 
-    public Collection<Livro> getAllLivros(){
-      return Collections.unmodifiableCollection(listaLivros);
-    };
+    public Collection<Livro> getAllLivros() {
+        String sqlQuery = "select * from viewLivroAutor";
+        try (PreparedStatement pstm = conn.prepareStatement(sqlQuery)) {
+            ResultSet rs = pstm.executeQuery();
 
-    public Collection<Livro> selecionarPorAutor(Pessoa pessoa){
-        Collection<Livro> livrosAutor = new ArrayList<>();
-        for(Livro livro : getAllLivros()){
-            if(livro.getAutor().equals(pessoa)){
-                livrosAutor.add(livro);
+            ArrayList<Livro> listaLivros = new ArrayList<>();
+            while (rs.next()) {
+                listaLivros.add(new Livro(
+                                new Autor(rs.getString("cpf"),
+                                        rs.getString("nome"),
+                                        rs.getString("sobrenome"),
+                                        rs.getString("email"),
+                                        new GenderFactory().getGeneroByName(rs.getString("genero")),
+                                        rs.getString("senha")
+                                ),
+                                rs.getString("titulo"),
+                                new StatusFactory().buscarStatusCorreto(rs.getString("status")),
+                                rs.getInt("qtdPaginas"),
+                                rs.getInt("isbn")
+                        )
+                );
             }
+            return Collections.unmodifiableCollection(listaLivros);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar todos os livros: " + e);
         }
-        return livrosAutor;
     }
 
-    public Collection<Livro> selecionarPorStatus(Status status){
+    ;
+
+    public Collection<Livro> selecionarPorAutor(Pessoa pessoa) throws SQLException {
+        String sqlCommand = "select * from livros";
+        try (PreparedStatement pstm = conn.prepareStatement(sqlCommand)) {
+            ResultSet rs = pstm.executeQuery();
+            Collection<Livro> livrosAutor = new ArrayList<>();
+            while (rs.next()) {
+                String autorCPF = rs.getString("AUTOR_cpf");
+                if (autorCPF.equals(Menu.getUsuario().getCPF())) {
+                    livrosAutor.add(
+                            new Livro(
+                                    (Autor) Menu.getUsuario(),
+                                    rs.getString("titulo"),
+                                    new StatusFactory().buscarStatusCorreto(rs.getString("status")),
+                                    rs.getInt("qtdPaginas"),
+                                    rs.getInt("isbn")
+                            )
+                    );
+                }
+            }
+            return livrosAutor;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro na preparação em selecionar por autor" + e);
+        }
+
+    }
+
+
+    public Collection<Livro> selecionarPorStatus(Status status) {
+
         Collection<Livro> livrosStatus = new ArrayList<>();
-        for(Livro livro : getAllLivros()){
-            if(livro.getStatus().equals(status)){
+        for (Livro livro : getAllLivros()) {
+            if (livro.getStatus().equals(status)) {
                 livrosStatus.add(livro);
             }
         }
         return livrosStatus;
     }
-    public Collection<Livro> selecionarAtividadesAutor(Pessoa pessoa){
+
+    public Collection<Livro> selecionarAtividadesAutor(Pessoa pessoa) {
         Collection<Livro> livrosAutor = new ArrayList<>();
-        for(Livro livro : getAllLivros()){
-            if(livro.getAutor() == pessoa && livro.getStatus().equals(Status.AGUARDANDO_EDICAO)){
+        for (Livro livro : getAllLivros()) {
+            if (livro.getAutor() == pessoa && livro.getStatus().equals(Status.AGUARDANDO_EDICAO)) {
                 livrosAutor.add(livro);
-            };
+            }
+            ;
         }
         return livrosAutor;
     }
-
-
 
 
 }

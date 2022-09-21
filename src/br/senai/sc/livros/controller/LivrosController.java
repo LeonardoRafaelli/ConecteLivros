@@ -42,11 +42,11 @@ public class LivrosController {
     }
 
     public void atualizarStatus(Livro livro, Status status){
-        new LivroService().atualizarStatus(livro, status);
+        new LivroService().atualizarStatus(livro, status, 1);
     }
 
     public void adicionarRevisor(Livro livro, Pessoa usuario){
-        new LivroService().adicionarRevisor(livro, (Revisor) usuario);
+        new LivroService().adicionarRevisor(livro, (Revisor) usuario, 2);
     }
 
 

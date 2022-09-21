@@ -37,14 +37,6 @@ public enum Status {
         }
     }
 
-    public static Status getStatusCorreto(String stringStatus) {
-        for (Status status : Status.values()) {
-            if (status.getNome().equals(stringStatus)) {
-                return status;
-            }
-        }
-        return null;
-    }
 
     public String getNome() {
         return nome;

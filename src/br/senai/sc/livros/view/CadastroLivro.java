@@ -2,6 +2,7 @@ package br.senai.sc.livros.view;
 
 import br.senai.sc.livros.controller.LivrosController;
 import br.senai.sc.livros.model.entities.*;
+import br.senai.sc.livros.model.factory.StatusFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -83,7 +84,7 @@ public class CadastroLivro extends JFrame implements ActionListener{
                 }
             }
             case "confirmarButton" -> {
-                livrosController.atualizarStatus(livro, Status.getStatusCorreto(String.valueOf(opcoesStatus.getSelectedItem())));
+                livrosController.atualizarStatus(livro, new StatusFactory().buscarStatusCorreto(String.valueOf(opcoesStatus.getSelectedItem())));
                 if(usuario instanceof Revisor){
                     livrosController.adicionarRevisor(livro, usuario);
                     JOptionPane.showMessageDialog(null, "Livro revisado com sucesso!");
@@ -98,7 +99,7 @@ public class CadastroLivro extends JFrame implements ActionListener{
             }
             case "voltarButton" -> {
                 dispose();
-
+                new Menu(usuario);
             }
         }
     }

@@ -8,18 +8,11 @@ import java.util.Collections;
 import java.util.HashSet;
 
 public class Teste {
-    static String[] lista = {"Resp1", "Resp2", "Resp3"};
+    static int[] lista = {1,2,3};
 
     private static Collection<Livro> listaLivros = new HashSet<>();
 
     public static void main(String[] args) {
-//        String CPF = "123456";
-//        int hash = 0;
-//        for(char l : CPF.toCharArray()){
-//            hash += l;
-//        }
-//        System.out.println(hash);
-        LivroDAO livroDao = new LivroDAO();
-        livroDao.getAllLivros().add(new Livro());
+
     }
 }

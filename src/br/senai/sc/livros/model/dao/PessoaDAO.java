@@ -1,24 +1,25 @@
 package br.senai.sc.livros.model.dao;
 
-import br.senai.sc.livros.model.dao.conectaBD.ConexaoBD;
+import br.senai.sc.livros.model.factory.FactoryConnection;
 import br.senai.sc.livros.model.entities.*;
+import br.senai.sc.livros.model.factory.GenderFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class PessoaDAO {
-    static Connection conn;
-    static PreparedStatement pstm;
+    private Connection conn;
 
+    public PessoaDAO(){
+        this.conn = new FactoryConnection().connectDB();
+    }
 
     private static final Set<Pessoa> listaPessoas = new HashSet<>();
 
-    static{
+    static {
         listaPessoas.add(new Autor("12435678", "autor", "Rafaellizin",
                 "autor@", Genero.MASCULINO, "123"));
         listaPessoas.add(new Revisor("12435678", "revisor", "Rafaellizin",
@@ -29,86 +30,92 @@ public class PessoaDAO {
                 "diretor@", Genero.MASCULINO, "123"));
     }
 
-    public void inserir(Pessoa pessoa, int tipo) throws SQLException {
-        conn = ConexaoBD.connectDB();
-        String sqlCommand = "INSERT INTO PESSOAS (cpf, nome, sobrenome, email, genero, senha, tipo) values (?, ?, ?, ?, ?, ?, ?);";
-        pstm = conn.prepareStatement(sqlCommand);
-        pstm.setString(1, pessoa.getCPF());
-        pstm.setString(2, pessoa.getNome());
-        pstm.setString(3, pessoa.getSobrenome());
-        pstm.setString(4, pessoa.getEmail());
-        pstm.setObject(5, pessoa.getGenero().ordinal());
-        pstm.setString(6, pessoa.getSenha());
-        pstm.setInt(7, tipo);
-        pstm.execute();
-        conn.close();
+    public void inserir(Pessoa pessoa)  {
+        String sqlCommand = "INSERT INTO PESSOAS (cpf, nome, sobrenome, email, genero, senha, tipoAcesso) values (?, ?, ?, ?, ?, ?, ?);";
+        try (PreparedStatement pstm = conn.prepareStatement(sqlCommand)) {
+            pstm.setString(1, pessoa.getCPF());
+            pstm.setString(2, pessoa.getNome());
+            pstm.setString(3, pessoa.getSobrenome());
+            pstm.setString(4, pessoa.getEmail());
+
+            pstm.setInt(5, pessoa.getGenero().ordinal() + 1);
+
+            pstm.setString(6, pessoa.getSenha());
+            pstm.setInt(7,
+                    (pessoa instanceof Autor)?1:
+                            (pessoa instanceof Revisor)?2:3
+                    );
+
+            try {
+                pstm.execute();
+            } catch (Exception e){
+                throw new RuntimeException("\nErro ao executar a inserção da pessoa");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro de conexão com bd (inserir()): " + e);
+        }
         System.out.println("Cadastro chegou ao fim");
     }
 
-    public void remover(Pessoa pessoa){
+    public void remover(Pessoa pessoa) {
         listaPessoas.remove(pessoa);
     }
 
-    public Pessoa selecionarPorCPF(String CPF){
-        for(Pessoa pessoa : listaPessoas){
-            if(pessoa.getCPF().equals(CPF)) return pessoa;
+    public Pessoa selecionarPorCPF(String CPF) {
+        for (Pessoa pessoa : listaPessoas) {
+            if (pessoa.getCPF().equals(CPF)) return pessoa;
         }
         throw new RuntimeException("CPF não encontrado!");
     }
-    public Pessoa selecionarPorEmail(String email) throws SQLException {
+
+    public Pessoa selecionarPorEmail(String email) {
         String query = "select * from pessoas where email = ?";
-        conn = ConexaoBD.connectDB();
-        pstm = conn.prepareStatement(query);
-        pstm.setString(1, email);
-        ResultSet rs = pstm.executeQuery();
 
-        Pessoa pessoaSelecionada = null;
-        if(rs.next()){
+        try (PreparedStatement pstm = conn.prepareStatement(query)) {
+            pstm.setString(1, email);
+            try {
+                ResultSet rs = pstm.executeQuery();
 
-            Genero genero = null;
-            for(Genero g : Genero.values()){
-                if(g.ordinal() == rs.getInt("genero")){
-                    genero = g;
+                if (rs.next()) {
+                    int tipoPessoa = rs.getInt("tipoAcesso");
+                    if (tipoPessoa == 1) {
+                        return new Autor(
+                                rs.getString("cpf"),
+                                rs.getString("nome"),
+                                rs.getString("sobrenome"),
+                                email,
+                                new GenderFactory().getGeneroByName(rs.getString("genero")),
+                                rs.getString("senha")
+                        );
+                    } else if (tipoPessoa == 2) {
+                        return new Revisor(
+                                rs.getString("cpf"),
+                                rs.getString("nome"),
+                                rs.getString("sobrenome"),
+                                email,
+                                new GenderFactory().getGeneroByName(rs.getString("genero")),
+                                rs.getString("senha")
+                        );
+                    } else if (tipoPessoa == 3) {
+                        return new Diretor(
+                                rs.getString("cpf"),
+                                rs.getString("nome"),
+                                rs.getString("sobrenome"),
+                                email,
+                                new GenderFactory().getGeneroByName(rs.getString("genero")),
+                                rs.getString("senha")
+                        );
+                    }
+                } else {
+                    throw new RuntimeException("Pessoa não encontrada!");
                 }
-            }
-            int tipoPessoa = rs.getInt("tipo");
-            if(tipoPessoa == 1){
-                pessoaSelecionada = new Autor(
-                        rs.getString("cpf"),
-                        rs.getString("nome"),
-                        rs.getString("sobrenome"),
-                        email,
-                        genero,
-                        rs.getString("senha")
-                );
-            } else if(tipoPessoa == 2){
-                pessoaSelecionada = new Revisor(
-                        rs.getString("cpf"),
-                        rs.getString("nome"),
-                        rs.getString("sobrenome"),
-                        email,
-                        genero,
-                        rs.getString("senha")
-                );
-            } else if(tipoPessoa == 3){
-                pessoaSelecionada = new Diretor(
-                        rs.getString("cpf"),
-                        rs.getString("nome"),
-                        rs.getString("sobrenome"),
-                        email,
-                        genero,
-                        rs.getString("senha")
-                );
-            }
-        }
 
-//        System.out.println(pessoaSelecionada.getCPF());
-
-        if(pessoaSelecionada != null){
-                conn.close();
-                return pessoaSelecionada;
-        } else {
-            throw new RuntimeException("Pessoa não encontrada!");
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao executar a seleção por email da pessoa");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro de conexão com bd (selecionarPorEmail()): " + e);
         }
+        return null;
     }
 }

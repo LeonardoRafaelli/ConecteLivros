@@ -1,5 +1,8 @@
 package br.senai.sc.livros.model.entities;
 
+import br.senai.sc.livros.model.factory.PessoaFactory;
+import br.senai.sc.livros.view.Menu;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -81,7 +84,11 @@ public class Pessoa {
         if(senha.equals(confSenha)){
             if(email.contains("@")){
                 if(cpf.length() == 11){
-                        return new Pessoa(cpf,nome,sobrenome,email,genero,senha);
+                        int tipo = 1;
+                        if(Menu.getUsuario() instanceof Diretor){
+                            tipo = 2;
+                        }
+                        return new PessoaFactory().getPessoa(cpf,nome,sobrenome,email,senha,genero.getNome(), tipo);
                 } else {
                     throw new RuntimeException("CPF inválido!");
                 }
