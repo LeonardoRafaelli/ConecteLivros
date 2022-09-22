@@ -77,7 +77,7 @@ public class Pessoa {
 
     @Override
     public String toString() {
-        return nome + " " + sobrenome;
+        return nome + " " + sobrenome + " - CPF: " + CPF;
     }
 
     public static Pessoa cadastrar(String nome, String sobrenome, String email, Genero genero, String senha, String cpf, String confSenha){

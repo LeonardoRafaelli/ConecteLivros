@@ -13,7 +13,7 @@ import java.util.Set;
 public class PessoaDAO {
     private Connection conn;
 
-    public PessoaDAO(){
+    public PessoaDAO() {
         this.conn = new FactoryConnection().connectDB();
     }
 
@@ -30,7 +30,37 @@ public class PessoaDAO {
                 "diretor@", Genero.MASCULINO, "123"));
     }
 
-    public void inserir(Pessoa pessoa)  {
+    public Revisor buscarRevisor(String revisorCPF) {
+        String sqlQuery = "SELECT * FROM pessoas WHERE cpf = ?;";
+
+        try (PreparedStatement pstm = conn.prepareStatement(sqlQuery)) {
+            pstm.setString(1, revisorCPF);
+            try {
+                ResultSet rs = pstm.executeQuery();
+
+                if(rs.next()){
+                    return new Revisor(
+                            revisorCPF,
+                            rs.getString("nome"),
+                            rs.getString("sobrenome"),
+                            rs.getString("email"),
+                            new GenderFactory().getGeneroByName(rs.getString("genero")),
+                            rs.getString("senha")
+                    );
+                } else {
+                    return null;
+                }
+
+
+            } catch (Exception err) {
+                throw new RuntimeException("Erro ao executar buscarRevisor");
+            }
+        } catch (Exception err) {
+            throw new RuntimeException("Erro ao preparar buscarRevisor");
+        }
+    }
+
+    public void inserir(Pessoa pessoa) {
         String sqlCommand = "INSERT INTO PESSOAS (cpf, nome, sobrenome, email, genero, senha, tipoAcesso) values (?, ?, ?, ?, ?, ?, ?);";
         try (PreparedStatement pstm = conn.prepareStatement(sqlCommand)) {
             pstm.setString(1, pessoa.getCPF());
@@ -42,13 +72,13 @@ public class PessoaDAO {
 
             pstm.setString(6, pessoa.getSenha());
             pstm.setInt(7,
-                    (pessoa instanceof Autor)?1:
-                            (pessoa instanceof Revisor)?2:3
-                    );
+                    (pessoa instanceof Autor) ? 1 :
+                            (pessoa instanceof Revisor) ? 2 : 3
+            );
 
             try {
                 pstm.execute();
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException("\nErro ao executar a inserção da pessoa");
             }
         } catch (Exception e) {
@@ -61,12 +91,6 @@ public class PessoaDAO {
         listaPessoas.remove(pessoa);
     }
 
-    public Pessoa selecionarPorCPF(String CPF) {
-        for (Pessoa pessoa : listaPessoas) {
-            if (pessoa.getCPF().equals(CPF)) return pessoa;
-        }
-        throw new RuntimeException("CPF não encontrado!");
-    }
 
     public Pessoa selecionarPorEmail(String email) {
         String query = "select * from pessoas where email = ?";

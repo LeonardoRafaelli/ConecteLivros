@@ -17,15 +17,9 @@ public class PessoaService {
         bdPessoa.remover(pessoa);
     }
 
-    public Pessoa selecionarPorCPF(String CPF) {
-        return bdPessoa.selecionarPorCPF(CPF);
-    }
-
     public Pessoa selecionarPorEmail(String email){
-        try{
-            return new PessoaDAO().selecionarPorEmail(email);
-        } catch (Exception err){
-            throw new RuntimeException("Erro ao selecionar por email: " + err.getMessage());
-        }
+
+        return new PessoaDAO().selecionarPorEmail(email);
+
     }
 }

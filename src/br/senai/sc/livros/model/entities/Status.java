@@ -5,19 +5,18 @@ import br.senai.sc.livros.view.Menu;
 import java.util.Arrays;
 
 public enum Status {
-    AGUARDANDO_REVISAO("Aguardando revisão", new int[]{1, 3}),  //0
-    EM_REVISAO("Em revisão", new int[]{2}),                     //1
-    APROVADO("Aprovado", new int[]{2}),                         //2
-    AGUARDANDO_EDICAO("Aguardando edição", new int[]{2}),       //3
-    REPROVADO("Reprovado", new int[]{2, 3}),                    //4
-    PUBLICADO("Publicado", new int[]{3});                       //5
+    AGUARDANDO_REVISAO("Aguardando revisão"),       //0
+    EM_REVISAO("Em revisão"),                       //1
+    APROVADO("Aprovado"),                           //2
+    AGUARDANDO_EDICAO("Aguardando edição"),         //3
+    REPROVADO("Reprovado"),                         //4
+    PUBLICADO("Publicado");                         //5
 
     private String nome;
     private int[] permissao;
 
-    Status(String nome, int[] permissao) {
+    Status(String nome) {
         this.nome = nome;
-        this.permissao = permissao;
     }
 
     public static String[] getAllStatus() {

@@ -1,8 +1,11 @@
 package br.senai.sc.livros.model.factory;
 
+import br.senai.sc.livros.model.dao.PessoaDAO;
 import br.senai.sc.livros.model.entities.*;
 
 public class PessoaFactory {
+
+
     public Pessoa getPessoa(String cpf, String nome, String sobrenome, String email, String senha, String genero, Integer tipoAcesso){
         switch (tipoAcesso){
             case 1 -> {
@@ -17,4 +20,5 @@ public class PessoaFactory {
         }
         return null;
     }
+
 }

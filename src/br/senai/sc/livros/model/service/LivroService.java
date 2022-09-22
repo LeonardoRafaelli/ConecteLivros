@@ -63,10 +63,14 @@ public class LivroService {
         if (pessoa instanceof Autor) {
             return selecionarAtividadesAutor(pessoa);
         } else if (pessoa instanceof Revisor) {
-            Collection<Livro> livros = new LivroDAO().selecionarPorStatus(Status.AGUARDANDO_REVISAO);
-            for (Livro livro : new LivroDAO().selecionarPorStatus(Status.EM_REVISAO)) {
-                if (livro.getRevisor() == pessoa) {
-                    livros.add(livro);
+            Collection<Livro> livros = selecionarPorStatus(Status.AGUARDANDO_REVISAO);
+            System.out.println("Revisor: "+ pessoa);
+            for (Livro livro : selecionarPorStatus(Status.EM_REVISAO)) {
+                System.out.println("Livro: "+livro.getRevisor());
+                if(livro.getRevisor() != null){
+                    if (livro.getRevisor().getCPF().equals(pessoa.getCPF())) {
+                        livros.add(livro);
+                    }
                 }
             }
             return livros;
@@ -84,13 +88,13 @@ public class LivroService {
         throw new RuntimeException("ISBN não encontrado!");
     }
 
-    public void atualizarStatus(Livro livro, Status status, int tipoAtualizacao) {
+    public void atualizarStatus(Livro livro, Status status) {
         livro.setStatus(status);
-        new LivroDAO().atualizarLivro(livro.getISBN(), livro, tipoAtualizacao);
+        new LivroDAO().atualizarStatus(livro);
     }
 
-    public void adicionarRevisor(Livro livro, Revisor revisor, int tipoAtualizacao) {
+    public void adicionarRevisor(Livro livro, Revisor revisor) {
         livro.setRevisor(revisor);
-        new LivroDAO().atualizarLivro(livro.getISBN(), livro, tipoAtualizacao);
+        new LivroDAO().adicionarRevisor(livro);
     }
 }

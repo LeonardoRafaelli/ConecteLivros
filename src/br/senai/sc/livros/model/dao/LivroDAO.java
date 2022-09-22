@@ -3,6 +3,7 @@ package br.senai.sc.livros.model.dao;
 import br.senai.sc.livros.model.factory.FactoryConnection;
 import br.senai.sc.livros.model.entities.*;
 import br.senai.sc.livros.model.factory.GenderFactory;
+import br.senai.sc.livros.model.factory.PessoaFactory;
 import br.senai.sc.livros.model.factory.StatusFactory;
 import br.senai.sc.livros.view.Menu;
 
@@ -40,7 +41,7 @@ public class LivroDAO {
         try (PreparedStatement pstm = conn.prepareStatement(sqlCommand);) {
             pstm.setInt(1, livro.getISBN());
             pstm.setString(2, livro.getTitulo());
-            pstm.setInt(3, livro.getStatus().ordinal());
+            pstm.setInt(3, livro.getStatus().ordinal() + 1);
             pstm.setInt(4, livro.getQntdPaginas());
             pstm.setString(5, livro.getAutor().getCPF());
             pstm.execute();
@@ -65,26 +66,38 @@ public class LivroDAO {
         return null;
     }
 
-    public void atualizarLivro(int isbn, Livro livroAtualizado, int tipoAtualizacao) {
-        //tipoAtualizacao
-        //1 - Atualiza Status
-        //2 - Adiciona Revisor ao livro
+    public void atualizarStatus(Livro livroAtualizado) {
+    String sqlCommand = "update livros set status = ? where isbn = ?;";
 
-        // TA QUASE PRONTOOOOO MAS É 21:51, ai n da
-        
-//        for (Livro livro : listaLivros) {
-//            if (livro.getISBN() == isbn) {
-//                listaLivros.remove(livro);
-//                listaLivros.add(livroAtualizado);
-//            }
-//            ;
-//        }
-//
-//        List<Livro> lista = new ArrayList<>(listaLivros);
-//        int i = lista.indexOf(selecionar(isbn));
-//        lista.set(i, livroAtualizado);
-//        listaLivros.clear();
-//        listaLivros.addAll(lista);
+    try(PreparedStatement pstm = conn.prepareStatement(sqlCommand)){
+        pstm.setInt(1, livroAtualizado.getStatus().ordinal()+1);
+        pstm.setInt(2, livroAtualizado.getISBN());
+        try {
+            pstm.execute();
+        }catch (Exception err){
+            throw new RuntimeException("Erro na execução de atualização de status: " + err.getMessage());
+        }
+    }catch (Exception err){
+        throw new RuntimeException("Erro na preparação de atualização de status: " + err.getMessage());
+    }
+
+    }
+
+    public void adicionarRevisor(Livro livroAtualizado) {
+        String sqlCommand = "update livros set REVISOR_cpf = ? where isbn = ?;";
+
+        try(PreparedStatement pstm = conn.prepareStatement(sqlCommand)){
+            pstm.setString(1, livroAtualizado.getRevisor().getCPF());
+            pstm.setInt(2, livroAtualizado.getISBN());
+            try{
+                pstm.execute();
+            } catch (Exception err){
+                throw new RuntimeException("Erro na execução de adicionar revisor");
+            }
+
+        } catch (Exception err){
+            throw new RuntimeException("Erro na preparação adicionar revisor.   - "+ err.getMessage());
+        }
     }
 
     public Collection<Livro> getAllLivros() {
@@ -94,26 +107,33 @@ public class LivroDAO {
 
             ArrayList<Livro> listaLivros = new ArrayList<>();
             while (rs.next()) {
-                listaLivros.add(new Livro(
-                                new Autor(rs.getString("cpf"),
-                                        rs.getString("nome"),
-                                        rs.getString("sobrenome"),
-                                        rs.getString("email"),
-                                        new GenderFactory().getGeneroByName(rs.getString("genero")),
-                                        rs.getString("senha")
-                                ),
-                                rs.getString("titulo"),
-                                new StatusFactory().buscarStatusCorreto(rs.getString("status")),
-                                rs.getInt("qtdPaginas"),
-                                rs.getInt("isbn")
-                        )
+                Livro livroBuscado = new Livro(
+                        new Autor(rs.getString("cpf"),
+                                rs.getString("nome"),
+                                rs.getString("sobrenome"),
+                                rs.getString("email"),
+                                new GenderFactory().getGeneroByName(rs.getString("genero")),
+                                rs.getString("senha")
+                        ),
+                        rs.getString("titulo"),
+                        new StatusFactory().buscarStatusCorreto(rs.getString("status")),
+                        rs.getInt("qtdPaginas"),
+                        rs.getInt("isbn")
                 );
+                String revisorCPF = rs.getString("REVISOR_cpf");
+                if(revisorCPF != null){
+                    Revisor revisor = new PessoaDAO().buscarRevisor(revisorCPF);
+                    livroBuscado.setRevisor(revisor);
+                }
+                listaLivros.add(livroBuscado);
             }
             return Collections.unmodifiableCollection(listaLivros);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar todos os livros: " + e);
+            throw new RuntimeException("Erro ao buscar todos os livros: " + e.getMessage());
         }
     }
+
+
 
     ;
 
@@ -158,13 +178,12 @@ public class LivroDAO {
     public Collection<Livro> selecionarAtividadesAutor(Pessoa pessoa) {
         Collection<Livro> livrosAutor = new ArrayList<>();
         for (Livro livro : getAllLivros()) {
-            if (livro.getAutor() == pessoa && livro.getStatus().equals(Status.AGUARDANDO_EDICAO)) {
+            if (livro.getAutor().getCPF().equals(pessoa.getCPF()) && livro.getStatus().equals(Status.AGUARDANDO_EDICAO)) {
                 livrosAutor.add(livro);
             }
             ;
         }
         return livrosAutor;
     }
-
 
 }
