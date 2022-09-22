@@ -90,7 +90,6 @@ public class CadastroLivro extends JFrame implements ActionListener{
                     JOptionPane.showMessageDialog(null, "Livro revisado com sucesso!");
                 } else {
                     JOptionPane.showMessageDialog(null, "Livro editado com sucesso!");
-
                 }
                 dispose();
                 Menu.getEstanteAtual().dispose();
